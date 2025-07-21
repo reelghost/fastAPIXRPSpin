@@ -54,18 +54,9 @@ def process_account(username, tag):
                 print(withdraw_response.text)
 
                 try:
-                    withdraw_data = withdraw_response.json()
-                    if withdraw_data.get('parameters'):
-                        response_message = withdraw_data['parameters'][1]
-                    else:
-                        response_message = withdraw_data.get('message', 'Unknown response')
-
-                    if "Incorrect destination tag" in response_message:
-                        retry_count += 1
-                        if retry_count < max_retries:
-                            sleep(random.uniform(3, 5))
-                            continue
-
+                    withdraw_data = withdraw_response.text
+                    if withdraw_data:
+                        response_message = withdraw_data
                     return response_message
 
                 except json.JSONDecodeError:
