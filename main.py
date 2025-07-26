@@ -51,14 +51,10 @@ def process_account(username, tag):
             if login_response.status_code == 200:
                 sleep(random.uniform(2, 3))
                 withdraw_response = scraper.post("https://xrpspin.com/api.php?act=withdrawXrp", json=withdraw_payload)
-                print(withdraw_response.text)
 
                 try:
-                    withdraw_data = withdraw_response.text
-                    if withdraw_data:
-                        response_message = withdraw_data
-                    return response_message
-
+                    withdraw_data = withdraw_response.json()
+                    return withdraw_data
                 except json.JSONDecodeError:
                     return "Invalid response"
             else:
@@ -78,3 +74,6 @@ def send_request(data: AccountRequest):
         return {"status": "success", "message": result}
     else:
         raise HTTPException(status_code=400, detail=result)
+@app.get("/author")
+def read_root():
+    return {"link": "https://ihatech.vercel.app"}
