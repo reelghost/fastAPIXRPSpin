@@ -8,6 +8,16 @@ from fake_useragent import UserAgent
 
 app = FastAPI()
 
+# Add CORS middleware
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Update with specific origins in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class AccountRequest(BaseModel):
     email: str
     tag: str
