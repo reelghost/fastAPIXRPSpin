@@ -60,7 +60,7 @@ def process_account(username, tag):
 
             try:
                 withdraw_data = withdraw_response.json()
-                return withdraw_data["parameters"][:-1]
+                return withdraw_data["parameters"]
             except (json.JSONDecodeError, KeyError, TypeError):
                 return withdraw_data if 'withdraw_data' in locals() else "Invalid response"
         else:
