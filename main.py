@@ -50,40 +50,29 @@ def process_account(username, tag):
         'X-Requested-With': 'XMLHttpRequest'
     })
 
-    max_retries = 3
-    retry_count = 0
+    try:
+        login_response = scraper.post("https://xrpspin.com/api.php?act=login", json=login_payload)
+        # login_data = login_response.json() if login_response.text else {}
 
-    while retry_count < max_retries:
-        try:
-            login_response = scraper.post("https://xrpspin.com/api.php?act=login", json=login_payload)
-            # login_data = login_response.json() if login_response.text else {}
+        if login_response.status_code == 200:
+            sleep(random.uniform(2, 3))
+            withdraw_response = scraper.post("https://xrpspin.com/api.php?act=withdrawXrp", json=withdraw_payload)
 
-            if login_response.status_code == 200:
-                sleep(random.uniform(2, 3))
-                withdraw_response = scraper.post("https://xrpspin.com/api.php?act=withdrawXrp", json=withdraw_payload)
+            try:
+                withdraw_data = withdraw_response.json()
+                return withdraw_data.
+            except json.JSONDecodeError:
+                return "Invalid response"
+        else:
+            return "Login failed"
 
-                try:
-                    withdraw_data = withdraw_response.json()
-                    return withdraw_data
-                except json.JSONDecodeError:
-                    return "Invalid response"
-            else:
-                return "Login failed"
-
-        except Exception as e:
-            retry_count += 1
-            if retry_count < max_retries:
-                sleep(random.uniform(2, 3))
-            else:
-                return f"Error: {str(e)}"
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @app.post("/send")
 def send_request(data: AccountRequest):
     result = process_account(data.email, data.tag)
-    if "success" in result.lower():
-        return {"status": "success", "message": result}
-    else:
-        raise HTTPException(status_code=400, detail=result)
+    return result
 @app.get("/author")
 def read_root():
     return {"link": "https://ihatech.vercel.app"}
